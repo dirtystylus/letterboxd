@@ -114,9 +114,9 @@ function getReview(element) {
 
   // the rest of description is a review, if there is no review the string 'Watched on ' will appear
   // this assumes you didn't write the 'Watched on ' string in your review... weak
-//   if (reviewParagraphs.last().text().includes("Watched on ")) {
-//     return review;
-//   }
+  if (reviewParagraphs.last().text().includes("Watched on ")) {
+    return review;
+  }
 // 
 //   // loop through paragraphs
 //   reviewParagraphs.each((i, element) => {
