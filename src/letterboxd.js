@@ -1,5 +1,7 @@
 const fetch = require("node-fetch");
 const cheerio = require("cheerio");
+const TurndownService = require('turndown')
+const turndownService = new TurndownService()
 
 function isListItem(element) {
   // if the list path is in the url
@@ -112,20 +114,20 @@ function getReview(element) {
 
   // the rest of description is a review, if there is no review the string 'Watched on ' will appear
   // this assumes you didn't write the 'Watched on ' string in your review... weak
-  if (reviewParagraphs.last().text().includes("Watched on ")) {
-    return review;
-  }
-
-  // loop through paragraphs
-  reviewParagraphs.each((i, element) => {
-    const reviewParagraph = $(element).text();
-
-    // only add paragaphs that are the review
-    if (reviewParagraph !== "This review may contain spoilers.") {
-      review += reviewParagraph + "\n";
-    }
-  });
-
+//   if (reviewParagraphs.last().text().includes("Watched on ")) {
+//     return review;
+//   }
+// 
+//   // loop through paragraphs
+//   reviewParagraphs.each((i, element) => {
+//     const reviewParagraph = $(element).text();
+// 
+//     // only add paragaphs that are the review
+//     if (reviewParagraph !== "This review may contain spoilers.") {
+//       review += reviewParagraph + "\n";
+//     }
+//   });
+  review = turndownService.turndown(description);
   // tidy up and add review to the item
   review = review.trim();
 
