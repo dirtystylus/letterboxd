@@ -99,11 +99,11 @@ function getImage(element) {
 }
 
 function getReview(element) {
-  const description = element.find("description").text();
+ const description = element.find("description").text();
 
   const $ = cheerio.load(description);
 
-  const reviewParagraphs = $("p");
+  const reviewParagraphs = $("p").slice(1);
 
   let review = "";
 
@@ -127,11 +127,13 @@ function getReview(element) {
 //       review += reviewParagraph + "\n";
 //     }
 //   });
-  review = turndownService.turndown(description);
+  // const reviewTextNodes = reviewParagraphs.slice(1, reviewParagraphs.length);
+  review = reviewParagraphs.toString();
+  const reviewMarkdown = turndownService.turndown(review);
   // tidy up and add review to the item
-  review = review.trim();
+  // reviewMark = review.trim();
 
-  return review;
+  return reviewMarkdown;
 }
 
 function getListFilms(element) {
