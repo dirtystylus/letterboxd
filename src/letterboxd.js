@@ -99,6 +99,42 @@ function getImage(element) {
 }
 
 function getReview(element) {
+  const description = element.find("description").text();
+
+  const $ = cheerio.load(description);
+
+  const reviewParagraphs = $("p");
+
+  let review = "";
+
+  // if there is no review return the item
+  if (reviewParagraphs.length <= 0) {
+    return review;
+  }
+
+  // the rest of description is a review, if there is no review the string 'Watched on ' will appear
+  // this assumes you didn't write the 'Watched on ' string in your review... weak
+  if (reviewParagraphs.last().text().includes("Watched on ")) {
+    return review;
+  }
+
+  // loop through paragraphs
+  reviewParagraphs.each((i, element) => {
+    const reviewParagraph = $(element).text();
+
+    // only add paragaphs that are the review
+    if (reviewParagraph !== "This review may contain spoilers.") {
+      review += reviewParagraph + "\n";
+    }
+  });
+
+  // tidy up and add review to the item
+  review = review.trim();
+
+  return review;
+}
+
+function getReviewAsMarkdown(element) {
  const description = element.find("description").text();
 
   const $ = cheerio.load(description);
@@ -117,21 +153,9 @@ function getReview(element) {
   if (reviewParagraphs.last().text().includes("Watched on ")) {
     return review;
   }
-// 
-//   // loop through paragraphs
-//   reviewParagraphs.each((i, element) => {
-//     const reviewParagraph = $(element).text();
-// 
-//     // only add paragaphs that are the review
-//     if (reviewParagraph !== "This review may contain spoilers.") {
-//       review += reviewParagraph + "\n";
-//     }
-//   });
-  // const reviewTextNodes = reviewParagraphs.slice(1, reviewParagraphs.length);
+
   review = reviewParagraphs.toString();
   const reviewMarkdown = turndownService.turndown(review);
-  // tidy up and add review to the item
-  // reviewMark = review.trim();
 
   return reviewMarkdown;
 }
@@ -256,7 +280,7 @@ function processItem(element) {
       image: getImage(element),
     },
     rating: getRating(element),
-    review: getReview(element),
+    review: getReviewAsMarkdown(element),
     spoilers: getSpoilers(element),
     isRewatch: getIsRewatch(element),
     uri: getUri(element),
